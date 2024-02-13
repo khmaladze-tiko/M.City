@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import { Redirect } from "react-router";
+import { firebase } from "../../firebase";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const SignIn = () => {
+const SignIn = (props) => {
 
     const [loading, setLoading] = useState(false)
     
@@ -23,9 +24,24 @@ const SignIn = () => {
         }),
         onSubmit: (values) => {
             setLoading(true)
-            console.log(values)
+            submitForm(values)
         }
     })
+    
+    const submitForm = (values) => {
+        firebase.auth()
+        .signInWithEmailAndPassword(
+            values.email,
+            values.password
+        ).then(() => {
+            // show success toast
+            props.history.push('/dashboard')
+        }).catch(error => {
+            setLoading(false);
+            alert(error)
+            /// show toasts
+        })
+    }
 
     return(
         <div className="container">
