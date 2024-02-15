@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { CircularProgress } from "@mui/material";
-// import { Redirect } from "react-router";
 import { firebase } from "../../firebase";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { showErrorToast, showSuccessToast } from "../Utils/tools";
+import { Redirect } from "react-router-dom";
 
 const SignIn = (props) => {
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,9 @@ const SignIn = (props) => {
       });
   };
 
-  return (
+  return(
+    <>
+    { !props.user ? (
     <div className="container">
       <div className="signin_wrapper" style={{ margin: "100px" }}>
         <form onSubmit={formik.handleSubmit}>
@@ -81,6 +83,10 @@ const SignIn = (props) => {
         </form>
       </div>
     </div>
+    ) : (
+        <Redirect to={'/dashboard'}/>
+    )}
+    </>
   );
 };
 
