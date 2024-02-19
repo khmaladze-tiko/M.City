@@ -1,14 +1,16 @@
 import React from "react";
+import AdminLayout from "../../Hoc/AdminLayout";
 
 const Dashboard = (props) => {
 
     console.log(props)
 
     return(
-        <>
-            <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
-            Dashboard
-        </>
+        <AdminLayout title="Dashboard">
+            <div className="user_dashboard">
+                This is your dashboard
+            </div>
+        </AdminLayout>
     )
 }
 

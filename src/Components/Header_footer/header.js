@@ -3,22 +3,12 @@ import { AppBar, Toolbar, Button } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
-import { CityLogo, showErrorToast, showSuccessToast } from "../Utils/tools";
-import { firebase } from "../../firebase";
+import { CityLogo } from "../Utils/tools";
+
+import { logoutHandler } from "../Utils/tools";
 
 const Header = ({ user }) => {
     console.log(user)
-  const logoutHandler = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        showSuccessToast("Good bye !!");
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-      });
-  };
 
   return (
     <AppBar
