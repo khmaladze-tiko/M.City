@@ -8,6 +8,28 @@ const Test = () => {
 
     return(
         <>
+
+            <button 
+                onClick={()=>{
+                    setBck('#f44336')
+                }}
+            >
+                Update
+            </button>
+            <button 
+                onClick={()=>{
+                    setShow(false)
+                }}
+            >
+                Remove
+            </button>
+            <button 
+                onClick={()=>{
+                    setShow(true)
+                }}
+            >
+                Show
+            </button>
             <Animate
                 show={show}
                 start={{
@@ -28,11 +50,41 @@ const Test = () => {
                     }
                 }}
                 update={{
-
+                    backgroundColor:bck,
+                    opacity:[0.5],
+                    timing:{
+                        duration:2000,
+                        ease:easePolyOut
+                    },
+                    events:{
+                        start:()=>{
+                            console.log('STARTED')
+                        },
+                        end:()=>{
+                            console.log('ENDED')
+                        },
+                        interrupt:()=>{
+                            ////
+                        }
+                    }
                 }}
-                leave={{
-                    
-                }}
+                leave={[
+                    {
+                        width:[1000],
+                        timing:{
+                            duration:500,
+                            ease:easePolyOut
+                        }
+                    },
+                    {
+                        opacity:[9],
+                        timing:{
+                            duration:3000,
+                            dalay:2000,
+                            ease:easePolyOut
+                        }
+                    }
+                ]}
             >
                 { ({backgroundColor, width, height, opacity}) => (
                     <div
