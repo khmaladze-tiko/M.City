@@ -38,12 +38,12 @@ const Text = () => {
             start={{
                 opacity:0,
                 x:503,
-                y:450
+                y:480
             }}
             enter={{
                 opacity:[1],
                 x:[273],
-                y:[450],
+                y:[480],
                 timing:{ duration: 500, ease:easePolyOut}
             }}
         >
@@ -66,12 +66,12 @@ const Text = () => {
             start={{
                 opacity:0,
                 x:503,
-                y:586
+                y:620
             }}
             enter={{
                 opacity:[1],
                 x:[273],
-                y:[586],
+                y:[620],
                 timing:{ delay:300, duration: 500, ease:easePolyOut}
             }}
         >
