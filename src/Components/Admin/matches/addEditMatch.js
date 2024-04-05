@@ -10,18 +10,20 @@ import { TextField, Select, MenuItem, FormControl, Button } from "@mui/material"
 import { matchesCollection, teamsCollection } from "../../../firebase";
 
 const defaultValues = {
-    data:'',
-    local:'',
-    resultLocal:'',
-    referee:'',
-    stadium:'',
-    result:'',
-    final:'',
+    data:"",
+    local:"",
+    resultLocal:"",
+    away:"",
+    resultAway:"",
+    referee:"",
+    stadium:"",
+    result:"",
+    final:"",
 }
 
 const AddEditMatch = (props) => {
     const [loading, setLoading] = useState(false);
-    const [formType, setFormType] = useState('');
+    const [formType, setFormType] = useState("");
     const [teams, setTeams] = useState(null);
     const [values, setValues] = useState(defaultValues);
 
@@ -37,13 +39,25 @@ const AddEditMatch = (props) => {
             .required('This input is required')
             .min(0, 'The minimum is 0')
             .max(99, 'The maximum is 30'),
+            away:Yup.string()
+            .required('This input is required'),
+            resultAway:Yup.number()
+            .required('This input is required')
+            .min(0, 'The minimum is 0')
+            .max(99, 'The maximum is 30'),
+            referee: Yup.string()
+            .required('This input is required'),
+            stadium: Yup.string()
+            .required('This input is required'),
+            result: Yup.mixed()
+            .required('This input is required')
+            .oneOf(["W","D","L","n/a"]),
             final:Yup.mixed()
             .required('This input is required')
             .oneOf(['yes','no'])
         }),
         onSubmit:(values) => {
-
-            console.log(values)
+           submitForm(values)
         }
     })
 
@@ -56,6 +70,37 @@ const AddEditMatch = (props) => {
         ))
         :null
     )
+
+    const submitForm = (values) => {
+        let dataToSubmit = values;
+        
+        teams.forEach((team) => {
+            if(team.shortName === dataToSubmit.local){
+                dataToSubmit["localThmb"] =team.thmb
+            }
+            if(team.shortName === dataToSubmit.away){
+                dataToSubmit["awayThmb"] = team.thmb
+            }
+        })
+
+        setLoading(true)
+        if( formType === "add"){
+            matchesCollection.add(dataToSubmit)
+            .then(() => {
+                showSuccessToast("Match added :)")
+                formik.resetForm()
+            }).catch(error => {
+                showErrorToast("Sorry, something went wrong", error)
+            }).finally(() => {
+                setLoading(true)
+            })
+        }else {
+
+        }
+    }
+
+
+
 
     useEffect(() => {
         if(!teams){
@@ -70,19 +115,19 @@ const AddEditMatch = (props) => {
         }
     },[teams])
 
-    console.log(teams)
+    // console.log(teams)
 
     useEffect(() => {
         const param = props.match.params.matchid
         if(param) {
-            matchesCollection.doc(param.get().then(snapshot => {
+            matchesCollection.doc(param).get().then(snapshot => {
                 if(snapshot.data()) {
-                    setFormType('add')
+                    setFormType('edit')
                     setValues(snapshot.data())
                 } else {
                     showErrorToast('No records found')
                 }
-            }))
+            })
         } else {
             setFormType('add')
             setValues(defaultValues)
@@ -93,7 +138,7 @@ const AddEditMatch = (props) => {
 
 
     return(
-        <AdminLayout title="undefined">
+        <AdminLayout title={ formType === "add" ? "Add match" : "Edit match" }>
             <div className="editmatch_dialog_wrapper">
                 <div>
                     <form onSubmit={formik.handleSubmit}>
@@ -177,7 +222,88 @@ const AddEditMatch = (props) => {
                             </FormControl>
 
                         </div>
-                   
+
+                        <hr/>
+
+                        <div>
+                            <h4>Match info</h4>
+                            <div className="mb-5">
+                                <FormControl>
+                                    <TextField
+                                        id="referee"
+                                        name="referee"
+                                        variant="outlined"
+                                        placeholder="Add the referee name"
+                                        {...formik.getFieldProps("referee")}
+                                        {...textErrorHelper(formik,"referee")}
+                                    />
+                                </FormControl>
+                            </div>
+                            <div className="mb-5">
+                                <FormControl>
+                                    <TextField
+                                        id="stadium"
+                                        name="stadium"
+                                        variant="outlined"
+                                        placeholder="Add the stadium name"
+                                        {...formik.getFieldProps("stadium")}
+                                        {...textErrorHelper(formik,"stadium")}
+                                    />
+                                </FormControl>
+                            </div>
+                            <div className="mb-5">
+                                <FormControl error={selectIsError(formik, "result")}>
+                                    <Select
+                                        id="result"
+                                        name="result"
+                                        variant="outlined"
+                                        displayEmpty
+                                        {...formik.getFieldProps("result")}
+                                    >
+                                        <MenuItem value="" disabled>Select a result</MenuItem>
+                                        <MenuItem value="W">Win</MenuItem>
+                                        <MenuItem value="D">Draw</MenuItem>
+                                        <MenuItem value="L">Lose</MenuItem>
+                                        <MenuItem value="n/a">Non available</MenuItem>
+
+                                    </Select>
+                                    {selectErrorHelper(formik, "result")}
+                                </FormControl>
+                            </div>
+                            <div className="mb-5">
+                                <FormControl error={selectIsError(formik, "final")}>
+                                    <Select
+                                        id="final"
+                                        name="final"
+                                        variant="outlined"
+                                        displayEmpty
+                                        {...formik.getFieldProps("final")}
+                                    >
+                                        <MenuItem value="" disabled>Was the game played</MenuItem>
+                                        <MenuItem value="yes">Yes</MenuItem>
+                                        <MenuItem value="no">No</MenuItem>
+
+                                    </Select>
+                                    {selectErrorHelper(formik, "final")}
+                                </FormControl>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                            >
+                                { formType === "add" ?
+                                    "Add match"
+                                :
+                                    "Edit match"
+                                }
+                            </Button>
+
+                        </div>
+
+
                     </form>
                 </div>
             </div>
